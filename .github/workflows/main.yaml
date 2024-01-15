@@ -4,6 +4,8 @@ on:
   schedule:
     - cron: '0 */5 * * *'  # 每5小时执行一次
 
+workflow_dispatch:
+
 jobs:
   get_youtube_info:  # 修正标识符
     runs-on: ubuntu-latest
