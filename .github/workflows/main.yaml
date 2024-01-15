@@ -1,4 +1,4 @@
-name: 获取 YouTube 电视直播m3u
+name: youTube电视直播m3u
 
 on:
   schedule:
