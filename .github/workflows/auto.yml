@@ -23,4 +23,4 @@ jobs:
         pip install requests
 
     - name: 获取 YouTube 直播信息
-      run: python .github/scripts/get_youtube_info.py ${{ secrets.YOUTUBE_API_KEY }}
+      run: python scripts/get_youtube_info.py ${{ secrets.YOUTUBE_API_KEY }}
