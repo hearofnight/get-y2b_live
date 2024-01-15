@@ -1,9 +1,8 @@
 name: YouTube Live Info
 
 on:
-  push:
-    branches:
-      - main
+  schedule:
+    - cron: '0 */5 * * *'  # Run every 5 hours
 
 jobs:
   get_youtube_info:
