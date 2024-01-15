@@ -5,7 +5,7 @@ on:
     - cron: '0 */5 * * *'  # 每5小时执行一次
 
 jobs:
-  获取_youtube_info:
+  get_youtube_info:  # 修正标识符
     runs-on: ubuntu-latest
 
     steps:
