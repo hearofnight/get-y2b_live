@@ -2,7 +2,7 @@ name: Fetch YouTube TV Live m3u
 
 on:
   schedule:
-    - cron: '0 */5 * * *'  # 每5小时执行一次
+    - cron: '0 */5 * * *'  
 
 jobs:
   get_youtube_info:
