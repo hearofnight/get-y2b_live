@@ -24,7 +24,7 @@ channel_ids = {
 }
 
 # 输出目录
-output_directory = "output"
+output_directory = "channels"
 
 # 创建输出目录
 os.makedirs(output_directory, exist_ok=True)
