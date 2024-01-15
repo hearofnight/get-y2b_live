@@ -3,11 +3,10 @@ name: youTube电视直播m3u
 on:
   schedule:
     - cron: '0 */5 * * *'  # 每5小时执行一次
-
-workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
-  get_youtube_info:  # 修正标识符
+  get_youtube_info:
     runs-on: ubuntu-latest
 
     steps:
