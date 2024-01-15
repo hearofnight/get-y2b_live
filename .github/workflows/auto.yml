@@ -1,4 +1,4 @@
-name: 获取 YouTube 直播信息
+name: auto获取 YouTube 直播信息
 
 on:
   schedule:
