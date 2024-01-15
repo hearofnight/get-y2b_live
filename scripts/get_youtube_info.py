@@ -1,29 +1,62 @@
-import requests
-import sys
+import os
+import googleapiclient.discovery
+from google.oauth2.credentials import Credentials
 
-def get_youtube_live_info(api_key, video_id):
-    url = f'https://www.googleapis.com/youtube/v3/videos?id={video_id}&part=liveStreamingDetails&key={api_key}'
-    response = requests.get(url)
-    data = response.json()
-    
-    if 'items' in data and data['items']:
-        live_info = data['items'][0]['liveStreamingDetails']
-        return live_info
-    else:
-        return None
+# YouTube Data API 密钥
+API_KEY = os.getenv("YOUTUBE_API_KEY")  # 请设置您的密钥或在环境变量中设置
 
-if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python get_youtube_info.py <API_KEY>")
-        sys.exit(1)
+# 频道信息
+channel_ids = {
+    "tvbs": "2mCSYvcfhtc",
+    "ttv": "xL0ch83RAK8",
+    "set": "FoBfXvlOR6I",
+    "ctv": "TCnaIE_SAtM",
+    "ftv": "P8DRJChuQQQ",
+    "ebc": "R2iMq5LKXco",
+    "ebcf": "ABn_ccXn_jc",
+    "cti": "_QbRXRnHMVY",
+    "gntv": "HXcm22-69Og",
+    "cgtn": "FGabkYr-Sfs",
+    "nhk": "f0lYkdA-Gtw",
+    "fr24": "h3MuIUNCCzI",
+    "pinhfr": "8ysjF7BCtRE",
+    "cgtnhfr": "oWwQuAN-KZc",
+}
 
-    youtube_api_key = sys.argv[1]
-    video_id = '2dfAzcDf8Zg'  # Replace with the actual YouTube video ID
+# 输出目录
+output_directory = "output"
 
-    live_info = get_youtube_live_info(youtube_api_key, video_id)
+# 创建输出目录
+os.makedirs(output_directory, exist_ok=True)
 
-    if live_info:
-        print(f"Live Broadcast started at: {live_info['actualStartTime']}")
-        print(f"Live Broadcast ended at: {live_info['actualEndTime']}")
-    else:
-        print("Unable to retrieve live broadcast information.")
+# 初始化 YouTube Data API
+youtube = googleapiclient.discovery.build("youtube", "v3", developerKey=API_KEY)
+
+# 获取频道信息
+for channel_name, channel_id in channel_ids.items():
+    # 获取频道的直播视频
+    request = youtube.search().list(
+        part="id",
+        channelId=channel_id,
+        eventType="live",
+        type="video",
+        maxResults=1,
+    )
+    response = request.execute()
+    videos = response.get("items", [])
+
+    if videos:
+        # 获取视频的直播流信息
+        video_id = videos[0]["id"]["videoId"]
+        request = youtube.videos().list(
+            part="liveStreamingDetails",
+            id=video_id,
+        )
+        response = request.execute()
+        live_details = response.get("items", [])[0]["liveStreamingDetails"]
+        m3u8_url = live_details["hlsUrl"]
+
+        # 保存到对应的 m3u8 文件
+        output_file = os.path.join(output_directory, f"{channel_name}.m3u8")
+        with open(output_file, "w") as f:
+            f.write(f"#EXTM3U\n#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=540000\n{m3u8_url}")
